@@ -1,1 +1,1 @@
-s box hardware for AES algorithm is efficiently implemented by Field isomorphism and composite field arithmetic.
+s box hardware for AES algorithm is efficiently implemented by Field isomorphism and composite field arithmetic. In conventional designs memory based implementation for Forward and Inverse S-box operation is done which requires significant area and Power. This approach is implemented by inspiring from the base paper uploaded in the repository.
