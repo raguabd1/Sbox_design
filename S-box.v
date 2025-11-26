@@ -19,6 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 // Code your design here
+// Code your design here
 module sbox(input [7:0]a, input ctrl,output [7:0]y);
   wire [7:0]w1,w2;
   
@@ -42,14 +43,14 @@ module preprocess(input [7:0]w, input mode1, output [7:0]x);
   xor x9(t1[5],t00,w[5]);
   xor x10(t1[4],t1[5],w[1]);
   xor x11(t1[3],t02,t01);
-  xor x12(t1[2],t00,w[4],w[1]);
+  xor x12(t1[2],t00,w[4],w[1]);  //O 2->2
   xor x13(t1[1],t01,w[4]);
   xor x14(t1[0],w[0],t01);
   xor x15(t2[7],t01,t02); //decryption path
   xor x16(t2[6],t00,t01,w[0],1'b1);
   xnor x17(t2[5],w[6],w[5],w[4],w[0]);
-  xnor x18(t2[4],w[5],w[4],w[3]);
-  xor x19(t2[3],t03,1'b1);
+  xnor x18(t2[3],w[5],w[4],w[3]); // O 3->4
+  xor x19(t2[4],t03,1'b1);        // O 4->3
   xor x20(t2[2],t01,t03,w[2],1'b1);
   xor x21(t2[1],w[5],w[3],w[1]);
   xor x22(t2[0],t02,w[6],1'b1);
@@ -68,13 +69,14 @@ endmodule
 module mul(input [3:0]d,e, output [3:0]f);
   
   wire f1,f2,f3,f4,f5,f6,f7,f8,f9,f10;
+
   
   xor y1(f1,e[3],e[2]);
-  xor y2(f2,d[3],d[2]);
+  xor y2(f2,d[3],d[2]);   //I 3->3
   xor y3(f3,d[1],d[0]);
-  xor y4(f4,e[1],e[0]);
+  xor y4(f4,e[5],e[0]);  //I 5->1
   and y5(f5,e[2],d[0]);
-  and y6(f6,e[2],d[2]);
+  and y6(f6,e[1],d[1]);  //I 1->2
   and y7(f7,e[3],d[3]);
   and y8(f8,e[0],d[0]);
   and y9(f9,e[0],d[2]);
@@ -94,7 +96,7 @@ module inv4(input [3:0]g,output [3:0]h);
   not n4(h10,g[3]);
   and n5(h1,h10,g[2]);
   and n6(h2,h8,g[2]);
-  and n7(h3,h9,g[0]);
+  and n7(h3,h9,g[1]);
   and n8(h4,h9,g[3]);
   and n9(h5,g[3],g[0]);
   and n10(h6,h10,g[1]);
@@ -121,7 +123,7 @@ module inversion(input [7:0]l,output [7:0]m);
   xor i1(b6,l[4],l[5]);
   xor i2(b2[3],b6,l[6]);
   xor i3(b2[2],l[7],l[4]);
-  and i4(b2[1],l[8],1'b1);
+  and i4(b2[1],l[7],1'b1);
   xor i5(b2[0],l[7],l[6]);
   xor4 i6(.i(l[3:0]),.j(l[7:4]),.k(b1));
   mul i7(.d(b1),.e(l[3:0]),.f(b3));
@@ -151,7 +153,7 @@ module postprocess(input [7:0]n,input mode2,output [7:0]o);
   xor h7(p[1],n[4],n[5]);
   xor h8(p[0],n[0],k00,n[2]);  
   xor h9(r[7],k01,n[3]);      //encryption-path
-  xor h10(r[6],n[5],k00,1'b1);
+  xor h10(r[6],n[7],k00,1'b1);
   xor h11(r[5],k01,1'b1);
   xor h12(r[4],n[7],n[4],k04);
   xor h13(r[3],n[2],k04);
@@ -160,3 +162,4 @@ module postprocess(input [7:0]n,input mode2,output [7:0]o);
   xor h16(r[0],k01,n[6],k04,1'b1);
   mux21 h17(.i0(r),.i1(p),.sel(mode2),.op(o));
 endmodule
+
